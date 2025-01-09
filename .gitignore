@@ -182,6 +182,8 @@ anchors.yml
 secrets.yml
 secrets.yml
 status.json
+processed.yml
+cleaned.yml
 
 **/_docker-compose.yaml
 **/_compose.yml
