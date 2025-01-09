@@ -1,0 +1,158 @@
+
+# Coston
+# address: 0.0.0.0
+# Costwo
+# address: 0.0.0.0
+# Songbird
+# address: 0.0.0.0
+# Flare
+# address: 0.0.0.0
+
+x-standard-logging: &standard-logging
+  setting: fluentd
+  gelf:
+    protocol: udp
+    host: graylog.home.arpa
+    port: 12201
+    labels: production_status,network_name,network_type,node_role,node_name,sub_system_key,sub_system_name
+    tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+    env: os,customer
+  fluentd:
+    protocol: udp
+    host: fluentd.home.arpa
+    port: 24224
+    labels: production_status,network_name,network_type,node_role,node_name,sub_system_key,sub_system_name
+    tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+    env: os,customer
+
+x-protocol-x-api-key-200: &protocol-x-api-key-200
+  api_key_name: X-API-KEY
+  api_keys: 1234567890
+
+# Labels
+x-standard-labels-testnet: &standard-labels-testnet
+  production_status: development
+  network_type: testnet
+
+x-standard-labels-songbird: &standard-labels-songbird
+  network_name: songbird
+  production_status: production
+  network_type: canary
+
+x-standard-labels-canary: &standard-labels-canary
+  production_status: production
+  network_type: canary
+
+x-standard-labels-flare: &standard-labels-flare
+  network_name: flare
+  production_status: production
+  network_type: mainnet
+
+x-standard-labels-sub-system-fdc: &standard-labels-sub-system-fdc
+  sub_system_key: fdc
+  sub_system_name: Flare Data Connector
+  sub_system_description: Flare Data Connector
+
+x-standard-labels-sub-system-fsp: &standard-labels-sub-system-fsp
+  sub_system_key: fsp
+  sub_system_name: Flare System Platform
+  sub_system_description: Flare System Platform
+
+x-standard-labels-sub-system-ftso: &standard-labels-sub-system-ftso
+  sub_system_key: ftso
+  sub_system_name: Flare Time Series Oracle
+  sub_system_description: Flare Time Series Oracle
+
+x-standard-db-settings-coston: &standard-db-settings-coston
+  host: db.costwo.home.arpa
+  port: 3306
+  name: flare_ftso_indexer_test
+  username: root
+  log_queries: false
+  <<: *standard-db-password
+
+x-standard-db-settings-costwo: &standard-db-settings-costwo
+  host: db.costwo.home.arpa
+  port: 3306
+  name: flare_ftso_indexer_test
+  username: root
+  log_queries: false
+  <<: *standard-db-password
+
+x-standard-db-settings-songbird: &standard-db-settings-songbird
+  host: db.songbird.home.arpa
+  port: 3306
+  name: flare_ftso_indexer_songbird
+  username: root
+  log_queries: false
+  <<: *songbird-db-password
+
+x-standard-db-settings-flare: &standard-db-settings-flare
+  host: db.flare.home.arpa
+  port: 3306
+  name: flare_ftso_indexer
+  username: root
+  log_queries: false
+  <<: *flare-db-password
+
+x-common-network-interface-address: &common-network-interface-address
+  address: 0.0.0.0
+x-data-support-systems-network-interface-address: &data-support-systems-network-interface-address
+  address: 0.0.0.0
+x-coston-network-interface-address: &coston-network-interface-address
+  address: 0.0.0.0
+x-costwo-network-interface-address: &costwo-network-interface-address
+  address: 0.0.0.0
+x-songbird-network-interface-address: &songbird-network-interface-address
+  address: 0.0.0.0
+x-flare-network-interface-address: &flare-network-interface-address
+  address: 0.0.0.0
+
+x-docker-compose-network-common-infra: &docker-compose-network-common-infra
+  interface:
+    <<: *common-network-interface-address
+
+x-docker-compose-network-data-support-systems: &docker-compose-network-data-support-systems
+  interface:
+    <<: *data-support-systems-network-interface-address
+
+x-docker-compose-network-coston: &docker-compose-network-coston
+  interface:
+    <<: *coston-network-interface-address
+
+x-docker-compose-network-testnet: &docker-compose-network-testnet
+  interface:
+    <<: *coston-network-interface-address
+
+x-docker-compose-network-costwo: &docker-compose-network-costwo
+  interface:
+    <<: *costwo-network-interface-address
+
+x-docker-compose-network-songbird: &docker-compose-network-songbird
+  interface:
+    <<: *songbird-network-interface-address
+
+x-docker-compose-network-flare: &docker-compose-network-flare
+  interface:
+    <<: *flare-network-interface-address
+
+x-docker-compose-network-mainnet: &docker-compose-network-mainnet
+  interface:
+    <<: *flare-network-interface-address
+
+x-docker-compose-flare-image: &docker-compose-flare-image
+  image: flarefoundation/go-flare:v1.9.1
+x-docker-compose-flare-indexer-db-image: &docker-compose-flare-indexer-db-image
+  image: library/mysql:9
+x-docker-compose-flare-indexer-image: &docker-compose-flare-indexer-image
+  image: ghcr.io/flare-foundation/flare-system-c-chain-indexer:v1.0.0
+x-docker-compose-flare-fast-update-client-image: &docker-compose-flare-fast-update-client-image
+  image: ghcr.io/flare-foundation/fast-updates/go-client:v1.0.0
+x-docker-compose-flare-fdc-client-image: &docker-compose-flare-fdc-client-image
+  image: ghcr.io/flarefoundation/fdc-client:1.0.1
+
+# image: ghcr.io/flare-foundation/fdc-client:v1.0.1
+x-docker-compose-flare-ftso-client-image: &docker-compose-flare-ftso-client-image
+  image: ghcr.io/flare-foundation/ftso-scaling:v1.0.0
+x-docker-compose-flare-system-client-image: &docker-compose-flare-system-client-image
+  image: ghcr.io/flare-foundation/flare-system-client:v1.0.0

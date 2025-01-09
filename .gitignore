@@ -169,3 +169,30 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+
+#################
+## Additions
+#################
+
+config.toml
+config.yml
+anchors.yml
+secrets.yml
+secrets.yml
+status.json
+
+**/_docker-compose.yaml
+**/_compose.yml
+
+**/*.db
+**/*.key
+**/*.key*
+
+**/*.pub
+
+**/*.crt*
+**/*.crt
+
+**/backups/*
