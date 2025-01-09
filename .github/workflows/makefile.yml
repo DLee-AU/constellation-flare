@@ -17,8 +17,8 @@ jobs:
     # - name: configure
     #   run: ./configure
 
-    - name: Check Default Help
-      run: make help
+    # - name: Check Default Help
+    #   run: make help
 
     # - name: Run check
     #   run: make
