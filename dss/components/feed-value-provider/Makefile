@@ -1,4 +1,3 @@
-# Bitcoin Node Makefile using docker-compose
 
 # SHELL := /bin/bash -x
 
@@ -22,30 +21,30 @@ config-show: .log-component-name
 ## @section Docker Operations
 .PHONY: up down restart status clean logs
 
-## Start MAINNET Bitcoin Node
+## Start Node
 up:	.log-component-name check-enabled-status
 	@$(call log_info,"Starting ${COMPONENT_NAME} ...")
 	$(QUIET)docker compose up -d
 
-## Stop MAINNET Bitcoin Node
+## Stop Node
 down: .log-component-name check-enabled-status
 	@$(call log_warn,"Stopping ${COMPONENT_NAME} ...")
 	$(QUIET)docker compose down
 
-## Restart MAINNET Bitcoin Node
+## Restart Node
 restart: down up
 
-## Check MAINNET Bitcoin Node Status
+## Check Node  Status
 status:	.log-component-name check-enabled-status
 	@$(call log_info,"Status ${COMPONENT_NAME} ...")
 	$(QUIET)docker compose ps
 
-## View MAINNET Bitcoin Node Logs
+## View Node  Logs
 logs: .log-component-name check-enabled-status
 	@$(call log_info,"Logs ${COMPONENT_NAME} ...")
 	$(QUIET)docker compose logs
 
-## Tail (Follow) MAINNET Bitcoin Node Logs
+## Tail (Follow) Node  Logs
 tail-logs: .log-component-name check-enabled-status
 	@$(call log_info,"Logs (Tail) ${COMPONENT_NAME} ...")
 	$(QUIET)docker compose logs -f

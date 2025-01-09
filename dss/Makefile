@@ -55,10 +55,10 @@ stop:	.log-component-name
 		$(MAKE) -C components/$$component stop; \
 	done
 
-## Restart MAINNET XRP Node
+## Restart Node
 restart: down up
 
-## Check MAINNET XRP Node Status
+## Check Node  Status
 # status:	.log-component-name check-enabled-status
 status:	.log-component-name
 	@$(call log_info,"Status ${COMPONENT_NAME} ...")
@@ -66,14 +66,14 @@ status:	.log-component-name
 		$(MAKE) -s -C components/$$component status 2>/dev/null; \
 	done
 
-## View MAINNET XRP Node Logs
+## View Node  Logs
 logs:	.log-component-name
 	@$(call log_info,"Logs ${COMPONENT_NAME} ...")
 	$(QUIET)for component in $(COMPONENT_TYPES); do \
 		$(MAKE) -C components/$$component logs; \
 	done
 
-## Tail (Follow) MAINNET XRP Node Logs
+## Tail (Follow) Node  Logs
 tail-logs:	.log-component-name
 	@$(call log_info,"Logs (Tail) ${COMPONENT_NAME} ...")
 	$(QUIET)for component in $(COMPONENT_TYPES); do \

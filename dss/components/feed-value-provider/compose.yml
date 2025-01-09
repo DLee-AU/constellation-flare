@@ -58,7 +58,7 @@ x-logging-settings-journald: &logging-settings-journald
 x-general-settings: &general-settings
   restart: unless-stopped
   stdin_open: true
-  tty: true  
+  tty: true
 
 services:
   node:
