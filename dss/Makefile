@@ -12,7 +12,7 @@
 # MAKEFLAGS += --no-print-directory --silent
 MAKEFLAGS += --no-print-directory
 
-COMPONENT_NAME="feed-value-provider"
+COMPONENT_NAME="DSS (Data Support Services)"
 
 MAKE_D_DIR = ../make.d
 
@@ -24,7 +24,7 @@ include ${MAKE_D_DIR}/color-codes.mk
 COMPONENT_TYPES := feed-value-provider
 
 ## @section Docker Configuration
-## Show Config MAINNET Nodes
+## Show Config  Nodes
 config-show: .log-component-name
 	@$(call log_info,"Starting ${COMPONENT_NAME} ...")
 	$(QUIET)for component in $(COMPONENT_TYPES); do \
@@ -34,21 +34,21 @@ config-show: .log-component-name
 ## @section Docker Operations
 .PHONY: up down restart status logs
 
-## Start MAINNET Nodes
+## Start  Nodes
 up: .log-component-name
 	@$(call log_info,"Starting ${COMPONENT_NAME} ...")
 	$(QUIET)for component in $(COMPONENT_TYPES); do \
 		$(MAKE) -C components/$$component up; \
 	done
 
-## Remove/Down MAINNET Nodes
+## Remove/Down  Nodes
 down:	.log-component-name
 	@$(call log_info,"Starting ${COMPONENT_NAME} ...")
 	$(QUIET)for component in $(COMPONENT_TYPES); do \
 		$(MAKE) -C components/$$component down; \
 	done
 
-## Stop MAINNET Nodes
+## Stop  Nodes
 stop:	.log-component-name
 	@$(call log_info,"Starting ${COMPONENT_NAME} ...")
 	$(QUIET)for component in $(COMPONENT_TYPES); do \
