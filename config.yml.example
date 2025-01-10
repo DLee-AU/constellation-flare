@@ -1,0 +1,243 @@
+---
+
+# This relies on having the anchors.yml and secrets.yml defined
+# copy from the anchors.yml.example & secrets.yml.example files
+
+# Common/Base Variables
+defaults:
+  volume:
+    device:
+      root: /srv/blockchain-data/constellation-flare
+
+# Sub-Systems
+common:
+  # Data Support Systems
+  dss:
+    nodes:
+      feed_value_provider:
+        enabled: true
+        docker:
+          compose:
+            name: feed-value-provider-node-001
+            image: ghcr.io/flare-foundation/ftso-v2-example-value-provider
+            network:
+              <<: *docker-compose-network-common-infra
+            labels:
+              <<: *standard-labels-sub-system-fdc
+              <<: *standard-labels-flare
+              network_name: feed_value_provider
+              node_role: local_node
+            logging:
+              <<: *standard-logging
+            ports:
+              default:
+                targeted: 3101
+                published: 3101
+
+  # Operational Support Systems
+  oss:
+    nodes:
+      fluentbit:
+        enabled: true
+        docker:
+          compose:
+            name: fluentbit
+            image: fluent/fluent-bit:latest
+            network:
+              <<: *docker-compose-network-common-infra
+            logging:
+              <<: *standard-logging
+            labels:
+              <<: *standard-labels-sub-system-fsp
+              <<: *standard-labels-flare
+              network_name: fluentbit
+              node_role: logging
+              node_name: fluentbit
+            ports:
+              default:
+                targeted: 24224
+                published: 24224
+            volume:
+              node_config:
+                name: fluentbit-config
+                device: "${PWD}/oss/components/fluentbit/conf"
+                target: /fluent-bit/etc/
+                source: node-config
+
+
+coston:
+  ftso:
+    nodes:
+      observation:
+        node_001:
+          enabled: true
+          environment:
+            network_id: coston
+            http_host: 0.0.0.0
+            http_port: 9650
+            staking_port: 9651
+            # local_db_dir: /srv/blockchain-data/flare/db
+            db_dir: /app/db
+            db_type: leveldb
+            log_dir: /app/logs
+            chain_config_dir: /app/conf
+            log_level: INFO
+            public_ip:
+            bootstrap_ips:
+            bootstrap_ids:
+            autoconfigure_public_ip: 1
+            autoconfigure_bootstrap: 1
+            autoconfigure_bootstrap_endpoint: https://coston.flare.network/ext/info
+          docker:
+            logging:
+              <<: *standard-logging
+            compose:
+              name: ftso-coston-observation-node-001
+              <<: *docker-compose-flare-image
+              network:
+                <<: *docker-compose-network-coston
+              labels:
+                <<: *standard-labels-sub-system-ftso
+                <<: *standard-labels-testnet
+                network_name: coston
+                node_role: local_node
+                node_name: ftso-coston-observation-node-001
+              ports:
+                http:
+                  targeted: 9650
+                  published: 9650
+                staking:
+                  targeted: 9651
+                  published: 9651
+              volume:
+                node_data:
+                  name: coston-ftso-observation-node-001-data
+                  device: /srv/blockchain-data/constellation-flare/ftso/coston/ftso-observation-node-001-data/db
+                  target: /app/db
+                  source: node-data
+                node_logs:
+                  name: coston-ftso-observation-node-001-logs
+                  device: /srv/blockchain-data/constellation-flare/ftso/coston/ftso-observation-node-001-data/logs
+                  target: /app/logs
+                  source: node-logs
+          rpc:
+            <<: *standard-rpc-testnet
+            url: http://coston.flare.network:9650
+
+costwo:
+  ftso:
+    nodes:
+      observation:
+        node_001:
+          enabled: true
+          environment:
+            network_id: costwo
+            http_host: 0.0.0.0
+            http_port: 9650
+            staking_port: 9651
+            # local_db_dir: /srv/blockchain-data/flare/db
+            db_dir: /app/db
+            db_type: leveldb
+            log_dir: /app/logs
+            chain_config_dir: /app/conf
+            log_level: INFO
+            public_ip:
+            bootstrap_ips:
+            bootstrap_ids:
+            autoconfigure_public_ip: 1
+            autoconfigure_bootstrap: 1
+            autoconfigure_bootstrap_endpoint: https://costwo.flare.network/ext/info
+          docker:
+            logging:
+              <<: *standard-logging
+            compose:
+              name: ftso-costwo-observation-node-001
+              <<: *docker-compose-flare-image
+              network:
+                <<: *docker-compose-network-costwo
+              labels:
+                <<: *standard-labels-sub-system-ftso
+                <<: *standard-labels-testnet
+                network_name: costwo
+                node_role: local_node
+                node_name: ftso-costwo-observation-node-001
+              ports:
+                http:
+                  targeted: 9650
+                  published: 9650
+                staking:
+                  targeted: 9651
+                  published: 9651
+              volume:
+                node_data:
+                  name: costwo-ftso-observation-node-001-data
+                  device: /srv/blockchain-data/constellation-flare/ftso/costwo/ftso-observation-node-001-data/db
+                  target: /app/db
+                  source: node-data
+                node_logs:
+                  name: costwo-ftso-observation-node-001-logs
+                  device: /srv/blockchain-data/constellation-flare/ftso/costwo/ftso-observation-node-001-data/logs
+                  target: /app/logs
+                  source: node-logs
+          rpc:
+            <<: *standard-rpc-testnet
+            url: http://costwo.flare.network:9650
+
+songbird:
+  ftso:
+    nodes:
+      observation:
+        node_001:
+          enabled: true
+          environment:
+            network_id: songbird
+            http_host: 0.0.0.0
+            http_port: 9650
+            staking_port: 9651
+            # local_db_dir: /srv/blockchain-data/flare/db
+            db_dir: /app/db
+            db_type: leveldb
+            log_dir: /app/logs
+            chain_config_dir: /app/conf
+            log_level: INFO
+            public_ip:
+            bootstrap_ips:
+            bootstrap_ids:
+            autoconfigure_public_ip: 1
+            autoconfigure_bootstrap: 1
+            autoconfigure_bootstrap_endpoint: https://songbird.flare.network/ext/info
+          docker:
+            logging:
+              <<: *standard-logging
+            compose:
+              name: ftso-songbird-observation-node-001
+              <<: *docker-compose-flare-image
+              network:
+                <<: *docker-compose-network-songbird
+              labels:
+                <<: *standard-labels-sub-system-ftso
+                <<: *standard-labels-canary
+                network_name: songbird
+                node_role: local_node
+                node_name: ftso-songbird-observation-node-001
+              ports:
+                http:
+                  targeted: 9650
+                  published: 9650
+                staking:
+                  targeted: 9651
+                  published: 9651
+              volume:
+                node_data:
+                  name: songbird-ftso-observation-node-001-data
+                  device: /srv/blockchain-data/constellation-flare/ftso/songbird/ftso-observation-node-001-data/db
+                  target: /app/db
+                  source: node-data
+                node_logs:
+                  name: songbird-ftso-observation-node-001-logs
+                  device: /srv/blockchain-data/constellation-flare/ftso/songbird/ftso-observation-node-001-data/logs
+                  target: /app/logs
+                  source: node-logs
+          rpc:
+            <<: *standard-rpc-testnet
+            url: http://songbird.flare.network:9650
