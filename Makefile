@@ -32,7 +32,8 @@ COMPOSE_YAML_FILES := $(shell find ./ -name "compose.yaml")
 # List of configuration files to generate
 DOCKER_COMPOSE_ENV_FILES := \
 	./dss/components/feed-value-provider/.env \
-	./oss/components/fluentbit/.env
+	./oss/components/fluentbit/.env \
+	./ftso/coston/observation-nodes/node-001/.env
 
 # ./fsp/songbird/components/system-client/config/app.env
 
@@ -53,7 +54,7 @@ status-all:
 	@$(call log_info,"Show Status All")
 	@$(MAKE) -C dss status
 	@$(MAKE) -C oss status
-# @$(MAKE) -C fsp status
+	@$(MAKE) -C ftso status
 # @$(MAKE) -C fdc/nodes-testnet status
 # @$(MAKE) -C fdc/nodes-mainnet status
 # @$(MAKE) -C fdc/verifiers-testnet status
@@ -162,6 +163,39 @@ oss-logs:
 ## Tail Logs oss Nodes
 oss-tail-logs:
 	@$(MAKE) -C oss tail-logs
+
+
+## @section FTSO
+.PHONY: ftso-up
+## Bring FTSO Up
+ftso-up:
+	@$(MAKE) -C ftso up
+
+.PHONY: ftso-down
+## Bring FTSO Down
+ftso-down:
+	@$(MAKE) -C ftso down
+
+.PHONY: ftso-status
+## Show Status FTSO Nodes
+ftso-status:
+	@$(MAKE) -C ftso status
+
+.PHONY: ftso-restart
+## Restart FTSO Nodes
+ftso-restart:
+	@$(MAKE) -C ftso restart
+
+.PHONY: ftso-logs
+## Show Logs ftso Nodes
+ftso-logs:
+	@$(MAKE) -C ftso logs
+
+.PHONY: ftso-tail-logs
+## Tail Logs ftso Nodes
+ftso-tail-logs:
+	@$(MAKE) -C ftso tail-logs
+
 
 ## @section File Utilities
 .PHONY: restore-docker-compose-files
