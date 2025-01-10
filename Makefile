@@ -31,7 +31,8 @@ COMPOSE_YAML_FILES := $(shell find ./ -name "compose.yaml")
 
 # List of configuration files to generate
 DOCKER_COMPOSE_ENV_FILES := \
-	./dss/components/feed-value-provider/.env
+	./dss/components/feed-value-provider/.env \
+	./oss/components/fluentbit/.env
 
 # ./fsp/songbird/components/system-client/config/app.env
 
@@ -50,11 +51,14 @@ APP_CONFIG_FILES := \
 ## Check Files Exist
 status-all:
 	@$(call log_info,"Show Status All")
-	@$(MAKE) -C fsp status
-	@$(MAKE) -C fdc/nodes-testnet status
-	@$(MAKE) -C fdc/nodes-mainnet status
-	@$(MAKE) -C fdc/verifiers-testnet status
-	@$(MAKE) -C fdc/verifiers-mainnet status
+	@$(MAKE) -C dss status
+	@$(MAKE) -C oss status
+# @$(MAKE) -C fsp status
+# @$(MAKE) -C fdc/nodes-testnet status
+# @$(MAKE) -C fdc/nodes-mainnet status
+# @$(MAKE) -C fdc/verifiers-testnet status
+# @$(MAKE) -C fdc/verifiers-mainnet status
+
 # @$(MAKE) -C fsp status
 
 .DEFAULT_GOAL := help
@@ -97,13 +101,14 @@ generate-configs:	.generate-docker-configs
 
 pull: fdc-testnet-nodes-pull fdc-mainnet-nodes-pull fdc-mainnet-verifiers-pull fdc-testnet-verifiers-pull
 
+## @section DSS (Data Support Services)
 .PHONY: dss-up
-## Bring Verifier Nodes Up
+## Bring Data Support Services Up
 dss-up:
 	@$(MAKE) -C dss up
 
 .PHONY: dss-down
-## Bring Verifier Nodes Down
+## Bring Data Support Services Down
 dss-down:
 	@$(MAKE) -C dss Down
 
@@ -126,6 +131,37 @@ dss-logs:
 ## Tail Logs dss Nodes
 dss-tail-logs:
 	@$(MAKE) -C dss tail-logs
+
+## @section OSS (Operational Support Services)
+.PHONY: oss-up
+## Bring Operational Support Services Up
+oss-up:
+	@$(MAKE) -C oss up
+
+.PHONY: oss-down
+## Bring Operational Support Services Down
+oss-down:
+	@$(MAKE) -C oss Down
+
+.PHONY: oss-status
+## Show Status oss Nodes
+oss-status:
+	@$(MAKE) -C oss status
+
+.PHONY: oss-restart
+## Restart oss Nodes
+oss-restart:
+	@$(MAKE) -C oss restart
+
+.PHONY: oss-logs
+## Show Logs oss Nodes
+oss-logs:
+	@$(MAKE) -C oss logs
+
+.PHONY: oss-tail-logs
+## Tail Logs oss Nodes
+oss-tail-logs:
+	@$(MAKE) -C oss tail-logs
 
 ## @section File Utilities
 .PHONY: restore-docker-compose-files

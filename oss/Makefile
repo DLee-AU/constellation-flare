@@ -12,7 +12,7 @@
 # MAKEFLAGS += --no-print-directory --silent
 MAKEFLAGS += --no-print-directory
 
-COMPONENT_NAME="OSS (Operational Support Services)"
+COMPONENT_NAME="OSS \(Operational Support Services\)"
 
 MAKE_D_DIR = ../make.d
 
