@@ -1,0 +1,93 @@
+---
+
+env:
+  flush_interval: 1
+
+# Global Properties
+service:
+  flush: ${flush_interval}
+  http_server: on
+  health_check: on
+  http_listen: 0.0.0.0
+  log_level: info
+  json.convert_nan_to_null: true
+  sp.convert_from_str_to_num: true
+  # log_level: debug
+  daemon:
+  log_file:
+
+parsers:
+  - name: json
+    format: json
+
+  - name: docker
+    format: json
+    time_key: time
+    time_format: "%Y-%m-%dT%H:%M:%S.%L"
+    time_keep: true
+
+multiline_parsers:
+  - name: multiline-regex-test
+    type: regex
+    flush_timeout: 1000
+    rules:
+      - state: start_state
+        regex: '/([a-zA-Z]+ \d+ \d+:\d+:\d+)(.*)/'
+        next_state: cont
+      - state: cont
+        regex: '/^\s+at.*/'
+        next_state: cont
+
+pipeline:
+  inputs:
+    # Forward is the protocol used by Fluent Bit and Fluentd to route messages between peers.
+    - name: forward
+      listen: 0.0.0.0
+      port: 24224
+
+  filters:
+    # For GELF Endpoints
+    - name: record_modifier
+      match: '*'
+      record:
+        - version 1.1
+        - host ${HOSTNAME}
+
+    # Strip Color Codes from Code
+    - name: lua
+      match: '*'
+      call: strip_ansi_color_code
+      code: |
+        function strip_ansi_color_code(tag, timestamp, record)
+          if type(record["log"]) == "string" then
+            record["log"] = record["log"]:gsub('[\27\155][][()#;?%d]*[A-PRZcf-ntqry=><~]', '')
+            return 2, 0, record
+          end
+          return 0, 0, 0
+        end
+
+    # Bitcoin
+    - name: grep
+      match: '*'
+      exclude: log UpdateTip
+    - name: grep
+      match: '*'
+      exclude: log Synchronizing blockheaders
+    - name: grep
+      match: '*'
+      exclude: log Rolling forward
+
+  outputs:
+    - name: stdout
+      match: '*'
+
+    - name: gelf
+      match: '*'
+      host: graylog.home.arpa
+      port: 12201
+      mode: udp
+      gelf_tag_key: container_name
+      gelf_short_message_key: log
+      gelf_timestamp_key: timestamp
+      gelf_host_key: host
+      compress: true

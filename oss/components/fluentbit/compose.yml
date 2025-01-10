@@ -1,0 +1,92 @@
+---
+
+name: "${DOCKER_COMPOSE_NAME}"
+# networks:
+# x-network-settings: &network-settings
+
+x-common-labels: &common-labels
+  production_status: ${LABELS_PRODUCTION_STATUS}
+  network_name: ${LABELS_NETWORK_NAME}
+  network_type: ${LABELS_NETWORK_TYPE}
+  node_role: ${LABELS_NODE_ROLE}
+  node_name: ${LABELS_NODE_NAME}
+  sub_system_key: ${LABELS_SUB_SYSTEM_KEY}
+  sub_system_name: ${LABELS_SUB_SYSTEM_NAME}
+
+
+x-logging-settings-gelf: &logging-settings-gelf
+  logging:
+    driver: gelf
+    options:
+      gelf-address: "${GRAYLOG_PROTOCOL}://${GRAYLOG_HOST}:${GRAYLOG_PORT}" # Logstash UDP input port
+      tag: "${GRAYLOG_TAG}"
+      gelf-compression-type: none
+      labels: "${GRAYLOG_LABELS}"
+      env: "${GRAYLOG_ENV}"
+
+x-logging-settings-local: &logging-settings-local
+  logging:
+    driver: "local"
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+x-logging-settings-json: &logging-settings-json
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+      labels: "${GRAYLOG_LABELS}"
+      env: "${GRAYLOG_ENV}"
+
+x-logging-settings-journald: &logging-settings-journald
+  logging:
+    driver: "journald"
+    options:
+      tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+      labels: "${GRAYLOG_LABELS}"
+      env: "${GRAYLOG_ENV}"
+
+x-general-settings: &general-settings
+  restart: unless-stopped
+  stdin_open: true # docker run -i
+  tty: true        # docker run -t
+  # env_file:
+  #   - .env
+
+services:
+  fluent-bit:
+    image: ${DOCKER_COMPOSE_IMAGE}
+    hostname: "${DOCKER_COMPOSE_NAME}"
+    container_name: "${DOCKER_COMPOSE_NAME}"
+    <<: [ *logging-settings-journald, *general-settings ]
+    # environment:
+      # - FLUENTD_CONF=fluent-bit.yaml
+    command: /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit-docker-rx.yaml
+    ports:
+      - ${DOCKER_COMPOSE_NETWORK_INTERFACE_ADDRESS}:24224:24224
+      - ${DOCKER_COMPOSE_NETWORK_INTERFACE_ADDRESS}:24224:24224/udp
+    volumes:
+      - node-config:${VOLUME_NODE_CONFIG_TARGET:-/fluent-bit/etc/}
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # depends_on:
+    #   - elasticsearch
+
+  # elasticsearch:
+  #   image: elasticsearch:7.6.2
+  #   ports:
+  #     - "9200:9200"
+  #   environment:
+  #     - discovery.type=single-node
+
+volumes:
+  node-config:
+    name: "${VOLUME_NODE_CONFIG_NAME}"
+    driver: local # Define the driver and options under the volume name
+    driver_opts:
+      type: none
+      device: "${VOLUME_NODE_CONFIG_DEVICE}"
+      o: bind
+    labels:
+      <<: *common-labels
