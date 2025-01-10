@@ -198,3 +198,4 @@ cleaned.yml
 **/*.crt
 
 **/backups/*
+.lock

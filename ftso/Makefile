@@ -22,7 +22,7 @@ include ${MAKE_D_DIR}/color-codes.mk
 .DEFAULT_GOAL := help
 
 # COMPONENT_TYPES := coston costwo flare
-COMPONENT_TYPES := coston costwo
+COMPONENT_TYPES := coston costwo songbird
 
 ## @section Docker Configuration
 ## Show Config MAINNET Nodes

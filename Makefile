@@ -34,7 +34,8 @@ DOCKER_COMPOSE_ENV_FILES := \
 	./dss/components/feed-value-provider/.env \
 	./oss/components/fluentbit/.env \
 	./ftso/coston/observation-nodes/node-001/.env \
-	./ftso/costwo/observation-nodes/node-001/.env
+	./ftso/costwo/observation-nodes/node-001/.env \
+	./ftso/songbird/observation-nodes/node-001/.env
 
 # ./fsp/songbird/components/system-client/config/app.env
 
